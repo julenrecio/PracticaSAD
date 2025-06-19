@@ -1,0 +1,7 @@
+import pandas as pd
+
+df1 = pd.read_csv("../DatosProyecto/AirBNBReviews_simplificado_NB.csv", header=0)
+df2 = pd.read_csv("../DatosProyecto/tripadvisor_hotel_reviews_simplificado.csv", header=0)
+df_unido = pd.concat([df1, df2], ignore_index=True)
+df = df_unido.rename(columns={'score': 'review_score'})
+df.to_csv("../DatosProyecto/train.csv", index=False)
