@@ -90,17 +90,24 @@ def simplify_text(data):
         sys.exit(1)
 
 
-def process_text(data):
+def process_text(data, v=None):
     try:
         text_col = data["review"]
-        v = TfidfVectorizer(max_features=args.features)
         text_data = text_col.astype(str)
-        x = v.fit_transform(text_data)
+        if args.mode == "train":
+            v = TfidfVectorizer(max_features=args.features)
+            x = v.fit_transform(text_data)
+        else:
+            x = v.transform(text_data)
         df1 = pd.DataFrame.sparse.from_spmatrix(x, columns=v.get_feature_names_out())
         data.drop("review", axis=1, inplace=True)
         data = pd.concat([data.reset_index(drop=True), df1.reset_index(drop=True)], axis=1)
         # data.to_csv('output/data-processed.csv', index=False)
-        return data
+        if args.mode == "train":
+            return data, v
+        else:
+            return data
+
     except Exception as e:
         print(Fore.RED + "Error al tratar el texto" + Fore.RESET)
         print(e)
@@ -116,12 +123,16 @@ def divide_data(data):
     return x_train, x_dev, y_train, y_dev
 
 
-def save_model(gs):
+def save_model(gs, v):
     try:
         timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
         filename = f'output/modelo_{args.algorithm}_{args.features}_{timestamp}.pkl'
+        gs_and_v = {
+            "model": gs,
+            "vectorizer": v
+        }
         with open(filename, 'wb') as file:
-            pickle.dump(gs, file)
+            pickle.dump(gs_and_v, file)
             print(Fore.CYAN + "Modelo guardado con éxito" + Fore.RESET)
         file.close()
         with open(f'output/modelo_{args.algorithm}_{args.features}_{timestamp}.csv', 'w') as file:
@@ -182,7 +193,7 @@ def mostrar_resultados_test(y_test, y_pred):
     print("> F1-score macro:\n", calculate_fscore(y_test, y_pred)[1])
 
 
-def algorithm(classiffier, data):
+def algorithm(classiffier, data, v):
     # Dividimos los datos en entrenamiento y dev
     x_train, x_dev, y_train, y_dev = divide_data(data)
 
@@ -201,41 +212,40 @@ def algorithm(classiffier, data):
     mostrar_resultados(gs, x_dev, y_dev)
 
     # Guardamos el modelo utilizando pickle
-    save_model(gs)
+    save_model(gs, v)
 
 
 def load_model():
     try:
-        with open('output/modelo.pkl', 'rb') as file:
-            model_pickle = pickle.load(file)
+        with open('output/500_features/modelo_kNN_500_20250621-145245.pkl', 'rb') as file:
+            objects = pickle.load(file)
             print(Fore.GREEN + "Modelo cargado con éxito" + Fore.RESET)
-            return model_pickle
+            return objects
     except Exception as e:
         print(Fore.RED + "Error al cargar el modelo" + Fore.RESET)
         print(e)
         sys.exit(1)
 
 
-def predict():
-    global file_data
-    columnas = file_data.columns
+def predict(data):
+    y_test = data["score"]
+    data.drop("score", axis=1, inplace=True)
+    columnas = data.columns
     columnasmodelo = model.feature_names_in_
     for i in range(len(columnas)):
         if columnas[i] not in columnasmodelo:
-            file_data.drop(columnas[i], axis=1, inplace=True)
+            data.drop(columnas[i], axis=1, inplace=True)
     for j in range(len(columnasmodelo)):
         if columnasmodelo[j] not in columnas:
-            file_data = pd.concat([file_data, pd.DataFrame([0] * len(file_data), columns=[columnasmodelo[j]])], axis=1)
+            data = pd.concat([data, pd.DataFrame([0] * len(data), columns=[columnasmodelo[j]])], axis=1)
     # data.sort_index(axis=1, inplace=True)
-    pd.DataFrame(model.feature_names_in_, columns=['Columnas en modelo']).to_csv('output/modelColumnas.csv',
-                                                                                 index=False)
-    y_pred = model.predict(file_data)
-    y_test = pd.read_csv('output/y_test.csv')
-
+    pd.DataFrame(model.feature_names_in_,
+                 columns=['Columnas en modelo']).to_csv('output/modelColumnas.csv', index=False)
+    y_pred = model.predict(data)
     mostrar_resultados_test(y_test, y_pred)
 
-    # Añadimos la prediccion al dataframe data
-    file_data = pd.concat([file_data, pd.DataFrame(y_pred, columns=["review_score"])], axis=1)
+    data = pd.concat([data, pd.DataFrame(y_pred, columns=["score"])], axis=1)
+    return data
 
 
 if __name__ == "__main__":
@@ -248,9 +258,9 @@ if __name__ == "__main__":
         pass
 
     if args.mode == "train":
-        file_data = pd.read_csv("DatosProyecto/train.csv", encoding='utf-8')
+        file_data = pd.read_csv("datos/train.csv", encoding='utf-8')
         file_data = simplify_text(file_data)
-        file_data = process_text(file_data)
+        file_data, vectorizer = process_text(file_data)
         print("Datos procesados")
 
         classifier = KNeighborsClassifier()
@@ -263,17 +273,22 @@ if __name__ == "__main__":
         elif args.algorithm == "naive_bayes":
             classifier = MultinomialNB()
         try:
-            algorithm(classifier, file_data)
+            algorithm(classifier, file_data, vectorizer)
             print("Algoritmo ejecutado con éxito")
             sys.exit(0)
         except Exception as ex:
             print(ex)
 
     elif args.mode == "test":
-        file_data = pd.read_csv("DatosProyecto/test.csv", encoding='utf-8')
-        model = load_model()
+        file_data = pd.read_csv("datos/test.csv", encoding='utf-8')
+        objetos = load_model()
+        model = objetos["model"]
+        vectorizer = objetos["vectorizer"]
+        file_data = simplify_text(file_data)
+        file_data = process_text(file_data, vectorizer)
+        print("Datos procesados")
         try:
-            predict()
+            file_data = predict(file_data)
             file_data.to_csv('output/data-prediction.csv', index=False)
             sys.exit(0)
         except Exception as ex:

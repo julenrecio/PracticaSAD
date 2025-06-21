@@ -2,17 +2,21 @@ import requests
 import pandas as pd
 
 
-def traducir_ollama(texto, modelo='llama3'):
-    prompt = f'Traduce al inglés este texto: "{texto}"'
+def traducir(texto, modelo='tinyllama'):
+    prompt = (
+        f'If the following text is not in English, translate it to English. '
+        f'If it is already in English, return it as-is.\n\n'
+        f'Text: "{texto}"'
+    )
+
     respuesta = requests.post(
         'http://localhost:11434/api/generate',
-        json={"model": modelo, "prompt": prompt}
+        json={"model": modelo, "prompt": prompt, "stream": False}
     )
     resultado = respuesta.json()
-    print("Respuesta completa de Ollama:", resultado)
-    return resultado['response']
+    return resultado.get('response', 'Error: no response')
 
 
-df_test = pd.read_csv("../DatosProyecto/airbnb_simplificado.csv")
-df_test['review'] = df_test['review'].apply(traducir_ollama)
-df_test.to_csv("../DatosProyecto/test.csv", index=False)
+df_test = pd.read_csv("../datos/airbnb_simplificado.csv")
+df_test['review'] = df_test['review'].apply(traducir)
+df_test.to_csv("../datos/test.csv", index=False)

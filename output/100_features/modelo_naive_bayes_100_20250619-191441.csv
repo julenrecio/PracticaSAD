@@ -1,0 +1,17 @@
+Params,Score
+"{'alpha': 1e-08, 'fit_prior': True}",0.47022543204631734
+"{'alpha': 1e-08, 'fit_prior': False}",0.48631385300317087
+"{'alpha': 0.0001, 'fit_prior': True}",0.47022543204631734
+"{'alpha': 0.0001, 'fit_prior': False}",0.4862338209903657
+"{'alpha': 0.1, 'fit_prior': True}",0.47006536802070703
+"{'alpha': 0.1, 'fit_prior': False}",0.4748686023648851
+"{'alpha': 0.25, 'fit_prior': True}",0.47006536802070703
+"{'alpha': 0.25, 'fit_prior': False}",0.46038130224067214
+"{'alpha': 0.5, 'fit_prior': True}",0.4697452079310507
+"{'alpha': 0.5, 'fit_prior': False}",0.44837537897464835
+"{'alpha': 0.75, 'fit_prior': True}",0.46950511189263533
+"{'alpha': 0.75, 'fit_prior': False}",0.4470948347313305
+"{'alpha': 1.0, 'fit_prior': True}",0.4689447916876919
+"{'alpha': 1.0, 'fit_prior': False}",0.44837537897464835
+"{'alpha': 2.0, 'fit_prior': True}",0.4678241192393691
+"{'alpha': 2.0, 'fit_prior': False}",0.4497359552307712

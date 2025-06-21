@@ -1,7 +1,7 @@
 import pandas as pd
 
-entrada = "DatosProyecto/tripadvisor_hotel_reviews.csv"
-salida = "DatosProyecto/tripadvisor_hotel_reviews_simplificado.csv"
+entrada = "datos/tripadvisor_hotel_reviews.csv"
+salida = "datos/tripadvisor_hotel_reviews_simplificado.csv"
 df = pd.read_csv(entrada)
 df.rename(columns={"Rating": "score"}, inplace=True)
 df.rename(columns={"Review": "review"}, inplace=True)

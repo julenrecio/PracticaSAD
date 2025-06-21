@@ -11,8 +11,8 @@ if __name__ == "__main__":
 
     csv.field_size_limit(sys.maxsize)
 
-    input_file = '../DatosProyecto/airbnb.csv'
-    output_file = '../DatosProyecto/airbnb_simplificado.csv'
+    input_file = '../datos/airbnb.csv'
+    output_file = '../datos/airbnb_simplificado.csv'
 
     with open(input_file, 'r', encoding='utf-8') as infile, \
             open(output_file, 'w', newline='', encoding='utf-8') as outfile:

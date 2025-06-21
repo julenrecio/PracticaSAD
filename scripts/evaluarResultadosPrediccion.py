@@ -1,0 +1,16 @@
+import pandas as pd
+
+data_with_prediction = pd.read_csv("../output/data-prediction.csv", encoding='utf-8')
+data_with_real_score = pd.read_csv("../datos/test.csv", encoding='utf-8')
+conteo_real = data_with_real_score["score"].value_counts()
+conteo_prediccion = data_with_prediction["score"].value_counts()
+media_real = data_with_real_score["score"].mean()
+media_prediccion = data_with_prediction["score"].mean()
+print("Número de instancias por cada clase, datos reales: ")
+print(conteo_real)
+print("\nNúmero de instancias por cada clase, predicción: ")
+print(conteo_prediccion)
+print("\nMedía del score real: ")
+print(media_real)
+print("\nMedía del score de la prediccion: ")
+print(media_prediccion)

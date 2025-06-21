@@ -3,8 +3,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 import pandas as pd
 
-entrada = "../DatosProyecto/AirBNBReviews.csv"
-salida = "../DatosProyecto/AirBNBReviews_simplificado_NB.csv"
+entrada = "../datos/AirBNBReviews.csv"
+salida = "../datos/AirBNBReviews_simplificado_NB.csv"
 df = pd.read_csv(entrada)
 df.drop(df.columns[0], axis=1, inplace=True)
 df.dropna(how='all', inplace=True)

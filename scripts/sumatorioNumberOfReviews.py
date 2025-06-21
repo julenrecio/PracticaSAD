@@ -5,7 +5,7 @@ if __name__ == "__main__":
 
     csv.field_size_limit(sys.maxsize)
 
-    input_file = '../DatosProyecto/airbnb.csv'
+    input_file = '../datos/airbnb.csv'
     total_reviews = 0
 
     with open(input_file, 'r', encoding='utf-8') as infile:
