@@ -1,0 +1,29 @@
+Número de instancias por cada clase, datos reales:
+score
+10    54687
+9     54353
+8      3836
+7       215
+6        29
+4         7
+2         7
+5         5
+3         3
+
+Número de instancias por cada clase, predicción:
+score
+10    61451
+8     36274
+5      5862
+0      4034
+2      2931
+6      1378
+9       732
+7       326
+1       154
+
+Medía del score real:
+9.443796291386047
+
+Medía del score de la prediccion:
+8.4598645949338

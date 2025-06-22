@@ -1,6 +1,6 @@
 import pandas as pd
 
-data_with_prediction = pd.read_csv("../output/data-prediction.csv", encoding='utf-8')
+data_with_prediction = pd.read_csv("../output/best/prediction.csv", encoding='utf-8')
 data_with_real_score = pd.read_csv("../datos/test.csv", encoding='utf-8')
 conteo_real = data_with_real_score["score"].value_counts()
 conteo_prediccion = data_with_prediction["score"].value_counts()

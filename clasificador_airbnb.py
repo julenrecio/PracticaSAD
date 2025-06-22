@@ -217,7 +217,7 @@ def algorithm(classiffier, data, v):
 
 def load_model():
     try:
-        with open('output/500_features/modelo_kNN_500_20250621-145245.pkl', 'rb') as file:
+        with open('output/best/modelo.pkl', 'rb') as file:
             objects = pickle.load(file)
             print(Fore.GREEN + "Modelo cargado con éxito" + Fore.RESET)
             return objects
@@ -240,7 +240,7 @@ def predict(data):
             data = pd.concat([data, pd.DataFrame([0] * len(data), columns=[columnasmodelo[j]])], axis=1)
     # data.sort_index(axis=1, inplace=True)
     pd.DataFrame(model.feature_names_in_,
-                 columns=['Columnas en modelo']).to_csv('output/modelColumnas.csv', index=False)
+                 columns=['Columnas en modelo']).to_csv('output/best/columns.csv', index=False)
     y_pred = model.predict(data)
     mostrar_resultados_test(y_test, y_pred)
 
@@ -289,7 +289,7 @@ if __name__ == "__main__":
         print("Datos procesados")
         try:
             file_data = predict(file_data)
-            file_data.to_csv('output/data-prediction.csv', index=False)
+            file_data.to_csv('output/prediction.csv', index=False)
             sys.exit(0)
         except Exception as ex:
             print(ex)
